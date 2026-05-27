@@ -5,7 +5,9 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 
-Proyecto desarrollado en el marco de la **Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial**. 
+Proyecto desarrollado en el marco de la **Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial**.
+
+> **Última revisión de la documentación:** 26 de mayo de 2026, 22:58 (UTC-03, America/Argentina/Buenos_Aires).
 
 Este repositorio contiene la arquitectura y configuración de un flujo de automatización *self-hosted* que extrae, procesa y distribuye información utilizando integraciones API y Modelos de Lenguaje de Gran Escala (LLMs).
 
@@ -13,14 +15,38 @@ Este repositorio contiene la arquitectura y configuración de un flujo de automa
 
 El objetivo de este sistema es mitigar la sobrecarga de información mediante un curador de contenidos autónomo. El pipeline se ejecuta de forma local, consume el feed de noticias de tecnología/ciencia (vía RSS), normaliza la estructura de datos mediante scripting, delega la síntesis semántica al modelo **Google Gemini**, y distribuye el reporte final a través de la API de **Gmail** utilizando autenticación segura OAuth2.
 
-### ⚙️ Arquitectura del Flujo (Nodos)
-1. **HTTP Request / XML:** Extracción de datos en crudo desde fuentes RSS.
-2. **JavaScript Processing:** Limpieza de metadatos y normalización de la estructura JSON.
-3. **AI Agent (Gemini):** Inferencia cognitiva para resumir y estructurar la información clave.
-4. **Gmail API:** Envío automatizado del reporte aplicando credenciales OAuth2.
+## 🧭 Flujo del Pipeline y Fechas
+
+Esta es la parte central del proyecto: cada ejecución del flujo conserva la fecha original de publicación de las noticias y agrega la fecha real de procesamiento/envío del reporte.
+
+| Etapa | Nodo / Tecnología | Fecha utilizada | Resultado |
+| --- | --- | --- | --- |
+| 1 | **HTTP Request / XML** | `pubDate` del RSS | Extrae noticias en crudo desde fuentes RSS y mantiene la fecha original publicada por la fuente. |
+| 2 | **JavaScript Processing** | Fecha de ejecución local de n8n | Limpia metadatos, normaliza el JSON y prepara los campos que recibirá el modelo. |
+| 3 | **AI Agent (Gemini)** | Fecha de procesamiento del reporte | Resume, clasifica y estructura la información clave para el informe final. |
+| 4 | **Gmail API** | Fecha real de envío del correo | Distribuye el reporte automatizado usando credenciales OAuth2. |
+
+### 🗓️ Convención de fechas
+
+- **Fecha de publicación:** proviene del campo `pubDate` del RSS y representa cuándo fue publicada la noticia original.
+- **Fecha de procesamiento:** corresponde al momento en que n8n ejecuta el flujo en el entorno local.
+- **Fecha de envío:** corresponde al momento en que Gmail entrega el reporte final.
+- **Zona horaria de referencia:** `America/Argentina/Buenos_Aires` (`UTC-03`).
+
+## ⚙️ Arquitectura del Flujo
+
+```mermaid
+flowchart LR
+    A["RSS / HTTP Request"] --> B["XML Parser"]
+    B --> C["JavaScript Processing"]
+    C --> D["AI Agent - Gemini"]
+    D --> E["Gmail API"]
+    E --> F["Reporte enviado"]
+```
 
 ## 📂 Estructura del Repositorio
 
+```text
 AutoNews/
 ├── docs/                   # Justificación teórica y documentación en PDF
 ├── screenshots/            # Evidencia visual del flujo en ejecución
@@ -28,32 +54,36 @@ AutoNews/
 ├── .env.example            # Plantilla de variables de entorno requeridas
 ├── docker-compose.yml      # Archivo de orquestación para despliegue en contenedores
 └── README.md               # Documentación principal del proyecto
+```
 
 ## 🛠️ Requisitos Previos
 
 Para ejecutar este proyecto en un entorno local (optimizado para macOS / procesadores Apple Silicon), se requiere:
 
-* **n8n:** Instalado de forma local (vía `npm` o Docker).
-* **Google Cloud Console:** Un proyecto activo con la *Gmail API* habilitada y credenciales OAuth2 configuradas (Client ID & Secret).
-* **Google AI Studio:** Una API Key válida para consumir el modelo Gemini.
+- **n8n:** instalado de forma local (vía `npm` o Docker).
+- **Google Cloud Console:** un proyecto activo con la *Gmail API* habilitada y credenciales OAuth2 configuradas (Client ID & Secret).
+- **Google AI Studio:** una API Key válida para consumir el modelo Gemini.
 
 ## 💻 Instalación y Despliegue
 
 **1. Clonar el repositorio:**
-\`\`\`bash
+
+```bash
 git clone https://github.com/TU_USUARIO/AutoNews.git
 cd AutoNews
-\`\`\`
+```
 
 **2. Configurar el entorno:**
-* Duplica el archivo `.env.example` y renómbralo a `.env`.
-* Completa tus credenciales privadas (Gemini API Key, Google Client ID y Secret).
+
+- Duplica el archivo `.env.example` y renómbralo a `.env`.
+- Completa tus credenciales privadas (Gemini API Key, Google Client ID y Secret).
 
 **3. Importar el flujo:**
-* Inicia tu servidor local de n8n.
-* Accede a la interfaz web (por defecto `http://localhost:5678`).
-* En el panel principal, selecciona *Import from File* y elige el archivo `.json` ubicado en la carpeta `workflows/`.
-* Conecta tus credenciales de Google cuando el nodo de Gmail lo solicite.
+
+- Inicia tu servidor local de n8n.
+- Accede a la interfaz web (por defecto `http://localhost:5678`).
+- En el panel principal, selecciona *Import from File* y elige el archivo `.json` ubicado en la carpeta `workflows/`.
+- Conecta tus credenciales de Google cuando el nodo de Gmail lo solicite.
 
 ## 📄 Licencia
 
