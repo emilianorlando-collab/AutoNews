@@ -1,0 +1,194 @@
+{
+  "name": "resumen_noticias_ia",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "ec7967b6-5a48-462e-9043-69bb3fe3b6b5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -192,
+        -32
+      ],
+      "id": "daab0c18-b69b-4a21-8d7d-d91adbda3cd9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -32
+      ],
+      "id": "06e0ee40-fdda-4dec-b22f-cc0c79cf060c",
+      "name": "XML"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.first().json.rss.channel.item;\n\nconst noticias = items.slice(0, 5).map((item, index) => ({\n  numero: index + 1,\n  titulo: item.title || \"Sin título\",\n  fecha: item.pubDate || \"Fecha no disponible\",\n  descripcion: (item.description || \"\").replace(/<[^>]*>/g, \"\").trim(),\n  link: item.link || \"\"\n}));\n\nreturn [\n  {\n    json: {\n      fechaReporte: new Date().toLocaleDateString(\"es-AR\", {\n        timeZone: \"America/Argentina/Buenos_Aires\",\n        day: \"2-digit\",\n        month: \"long\",\n        year: \"numeric\"\n      }),\n      noticias\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -32
+      ],
+      "id": "16e9cf92-31f4-41b2-a665-13bcf2e8ce12",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Actuá como editor de un newsletter diario de tecnología.\n\nRecibirás una lista de noticias tecnológicas en formato JSON. Tu tarea es generar un email claro, profesional y fácil de leer.\n\nDevolvé únicamente HTML válido. No uses Markdown. No uses ```.\n\nEstructura obligatoria:\n1. Título principal: \"Reporte tecnológico diario\"\n2. Fecha del reporte\n3. Un resumen ejecutivo de 2 o 3 líneas\n4. Una sección llamada \"Noticia principal del día\"\n5. Una sección llamada \"Otras noticias destacadas\"\n6. Cada noticia debe tener título, explicación breve, relevancia y enlace\n7. Cierre breve\n\nEstilo:\n- Español claro y profesional\n- Texto breve, no más de 5 noticias\n- Sin exageraciones\n- Pocos emojis o ninguno\n- Formato visual amigable para Gmail\n\nUsá este diseño HTML simple:\n- Contenedor con ancho máximo de 680px\n- Títulos claros\n- Separadores suaves\n- Links visibles\n- Párrafos cortos\n\nFecha del reporte:\n{{ $json.fechaReporte }}\n\nNoticias:\n{{ JSON.stringify($json.noticias, null, 2) }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        432,
+        -32
+      ],
+      "id": "b9bb7b36-0398-4d2f-bc9c-948032bc6380",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        192
+      ],
+      "id": "7422fedf-a43e-476b-b0f9-daa64c5b841c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "y0w2G0jINjCOXtYA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "emilianorlando@gmail.com",
+        "subject": "Resumen de noticias tecnológicas",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        -32
+      ],
+      "id": "18572e5d-0f9f-4730-8245-15aef9155005",
+      "name": "Send a message",
+      "webhookId": "3100bb54-86cc-430d-b8d3-62c853ec5085",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "nx0hSC8TC40Z4oPt",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e64f1c5a-9b7a-47f5-a394-763f767b8e38",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2af12ba796f3b6c37e44a67510810933b1e8769cdcc21ec0ef46f24c8e482469"
+  },
+  "id": "346nCbIjrpxSZ5UJ",
+  "tags": []
+}

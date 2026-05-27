@@ -56,7 +56,8 @@ AutoNews/
 │   ├── 01-workflow-completo.png        # Evidencia visual del flujo completo en n8n
 │   └── 02-email-recibido.png           # Ejemplo del reporte enviado por Gmail
 ├── workflows/
-│   └── resumen_noticias_ia.json        # Workflow exportado desde n8n
+│   ├── 01_resumen_noticias_texto_plano.json   # Versión inicial: resumen simple en texto plano
+│   └── 02_resumen_noticias_email_html.json    # Versión mejorada: email estructurado en HTML
 ├── .env.example                        # Plantilla de variables de entorno
 ├── .gitignore                          # Exclusiones para credenciales y archivos locales
 ├── LICENSE                             # Licencia MIT
