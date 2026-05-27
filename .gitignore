@@ -1,0 +1,27 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+
+# n8n local data
+.n8n/
+credentials/
+*.sqlite
+database.sqlite
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+.cache/
