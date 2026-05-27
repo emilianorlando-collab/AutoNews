@@ -48,12 +48,20 @@ flowchart LR
 
 ```text
 AutoNews/
-├── docs/                   # Justificación teórica y documentación en PDF
-├── screenshots/            # Evidencia visual del flujo en ejecución
-├── workflows/              # Archivo JSON exportado con el código fuente de n8n
-├── .env.example            # Plantilla de variables de entorno requeridas
-├── docker-compose.yml      # Archivo de orquestación para despliegue en contenedores
-└── README.md               # Documentación principal del proyecto
+├── docs/
+│   ├── arquitectura.md                 # Diseño técnico y etapas del pipeline
+│   ├── configuracion-google-cloud.md   # Guía para Gmail API y OAuth2
+│   └── prompts-gemini.md               # Prompts utilizados para generar reportes
+├── screenshots/
+│   ├── 01-workflow-completo.png        # Evidencia visual del flujo completo en n8n
+│   └── 02-email-recibido.png           # Ejemplo del reporte enviado por Gmail
+├── workflows/
+│   └── resumen_noticias_ia.json        # Workflow exportado desde n8n
+├── .env.example                        # Plantilla de variables de entorno
+├── .gitignore                          # Exclusiones para credenciales y archivos locales
+├── LICENSE                             # Licencia MIT
+├── README.md                           # Documentación principal del proyecto
+└── Trabajo Práctico...pdf              # Informe académico del proyecto
 ```
 
 ## 🛠️ Requisitos Previos
