@@ -69,7 +69,7 @@ Para ejecutar este proyecto en un entorno local (optimizado para macOS / procesa
 **1. Clonar el repositorio:**
 
 ```bash
-git clone https://github.com/TU_USUARIO/AutoNews.git
+git clone https://github.com/emilianorlando-collab/AutoNews.git
 cd AutoNews
 ```
 
