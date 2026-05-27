@@ -21,7 +21,6 @@ El objetivo de este sistema es mitigar la sobrecarga de información mediante un
 
 ## 📂 Estructura del Repositorio
 
-\`\`\`text
 AutoNews/
 ├── docs/                   # Justificación teórica y documentación en PDF
 ├── screenshots/            # Evidencia visual del flujo en ejecución
@@ -29,7 +28,6 @@ AutoNews/
 ├── .env.example            # Plantilla de variables de entorno requeridas
 ├── docker-compose.yml      # Archivo de orquestación para despliegue en contenedores
 └── README.md               # Documentación principal del proyecto
-\`\`\`
 
 ## 🛠️ Requisitos Previos
 
